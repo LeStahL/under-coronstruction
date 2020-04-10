@@ -1,10 +1,22 @@
 {
     "scenes": [
         {
+            "name": "Scale Balls",
+            "prefix": "scaleballs",
+            "t_end": 10,
+            "t_start": 0
+        },
+        {
             "name": "Revision Graffiti",
             "prefix": "revision",
-            "t_end": 180,
-            "t_start": 0
+            "t_end": 20,
+            "t_start": 10
+        },
+        {
+            "name": "Cube Sausage",
+            "prefix": "cubesausage",
+            "t_end": 130,
+            "t_start": 20
         }
     ]
 }

@@ -187,6 +187,10 @@ void main_scene(in vec3 x, out vec2 sdf)
 
     sdf = vec2(mix(x.z,x.z-.005, sm(d)), 0.); // Floor
     
+    float cra = .1*x.x-iTime;
+    mat2 RA = mat2(cos(cra),sin(cra),-sin(cra),cos(cra));
+    x.yz = RA * x.yz;
+    
     const float msize = .05;
         vec3 a = mod(x-.1*iTime*c.xyy, msize)-.5*msize,
         aj = x-.1*iTime*c.xyy-a;
