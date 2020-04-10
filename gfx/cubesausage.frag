@@ -260,7 +260,7 @@ normal(main_normal, main_scene)
 
 #define march(id, sid, exit, step)void id(out vec3 x, in vec3 o, inout float d, in vec3 dir, in int N, out int i, out vec2 s){for(i = 0; i<N; ++i){x=o+d*dir;sid(x,s);if(s.x < 1.e-4) return; if(exit) return;d+=step;}}
 // FIXME #CRLF
-march(march_main, main_scene, x.z>12., min(s.x,1.e-2))
+march(march_main, main_scene, x.z>12., min(s.x,8.e-3))
 march(march_reflected, main_scene, x.z>12., min(s.x,1.e-2))
 march(march_shadow, main_scene, x.z>zup, min(s.x,1.e-2))
 // march(march_wall, wall_scene)
@@ -278,7 +278,8 @@ void colorize_floor(in vec3 x, in vec3 n, inout vec3 col)
     d /= psize;
     d = abs(-d)-.01;
     rand(hpi,r);
-    col = mix(mix(.6,1.,r)*c.xxx,.7*c.xxx, sm(d));
+    col = mix(mix(2.6,2.,r)*c.xxx,1.7*c.xxx, sm(d));
+//     col = mix(col, vec3(1.00,0.29,0.24), .6*r);
 }
 
 void illuminate(in vec3 x, in vec3 n, in vec3 dir, in vec3 l, inout vec3 col, in vec2 s)
@@ -437,7 +438,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         
         if(i<N)
         {
-            if(x.z < .2) col *= .3;
+            if(x.z < .2) col *= .6;
         }
     }
     //*/
