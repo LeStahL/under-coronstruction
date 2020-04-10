@@ -5,7 +5,7 @@ void dpolygon(in vec2 x, in float N, out float d);
 
 void dkewlers(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
     float da, d0;
     
     x *= 1.2;
@@ -20,5 +20,6 @@ void dkewlers(in vec2 x, out float d)
     dbox(x-vec2(.5,-.0),vec2(.1,.25),da);
     d0 = min(d0,da);
     
-    d = max(d, -d0);
+//     d = max(d, -d0);
+    d = d0;
 }

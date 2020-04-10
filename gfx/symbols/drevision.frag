@@ -1,5 +1,9 @@
 #version 130
 
+const float pi = acos(-1.);
+const vec3 c = vec3(1.,0.,-1.);
+uniform float iTime;
+
 // Revision logo of width 1.
 void lfnoise(in vec2 t, out float num);
 
@@ -17,7 +21,8 @@ void drevision(in vec2 x, in float r, out float dst)
     lfnoise(2.*c.xx-2.4*iTime, n1.y);
     lfnoise(3.*c.xx-2.9*iTime, n1.z);
     lfnoise(4.*c.xx-3.1*iTime, n1.w);
-    n1 = mix(n1,c.yyyy, clamp((iTime-24.)/2.,0.,1.));
+//     n1 = mix(n1,c.yyyy, clamp((iTime-24.)/2.,0.,1.));
+    n1 = c.yyyy;
     d = min(d, mix(d, abs(l-.11)-.03, step(p, -1.71)*step(-2.73, p)));
     d = min(d, mix(d, k1, step(p+n1.x, 3.08)*step(2.82,p)));
     d = min(d, mix(d, k1, step(p+n1.x, 1.47)*step(.81,p)));

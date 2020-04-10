@@ -10,7 +10,9 @@ void dbox(in vec2 x, in vec2 b, out float d);
 
 void dhaujobb(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
+    d = -1.;
+    
     float da, d0;
     mat2 m;
 	rot(.3,m);
@@ -64,4 +66,6 @@ void dhaujobb(in vec2 x, out float d)
     
     d0 -= .05*(abs(x.x)+abs(x.y)-.2);
     d = max(d,-d0);
+    
+    d = -d;
 }

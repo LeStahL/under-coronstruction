@@ -49,7 +49,7 @@ else if(t < t_cubesausage)
     glUniform1f(shader_uniform_gfx_scaleballs_iFader7, fader7);
 #endif
 }
-else if(t < t_credits)
+else if(t < t_greets)
 {
     glUseProgram(shader_program_gfx_cubesausage.handle);
     glUniform1f(shader_uniform_gfx_cubesausage_iTime, t-t_cubesausage);
@@ -63,6 +63,22 @@ else if(t < t_credits)
     glUniform1f(shader_uniform_gfx_cubesausage_iFader5, fader5);
     glUniform1f(shader_uniform_gfx_cubesausage_iFader6, fader6);
     glUniform1f(shader_uniform_gfx_cubesausage_iFader7, fader7);
+#endif
+}
+else if(t < t_credits)
+{
+    glUseProgram(shader_program_gfx_greets.handle);
+    glUniform1f(shader_uniform_gfx_greets_iTime, t-t_greets);
+    glUniform2f(shader_uniform_gfx_greets_iResolution, w, h);
+#ifdef MIDI
+    glUniform1f(shader_uniform_gfx_greets_iFader0, fader0);
+    glUniform1f(shader_uniform_gfx_greets_iFader1, fader1);
+    glUniform1f(shader_uniform_gfx_greets_iFader2, fader2);
+    glUniform1f(shader_uniform_gfx_greets_iFader3, fader3);
+    glUniform1f(shader_uniform_gfx_greets_iFader4, fader4);
+    glUniform1f(shader_uniform_gfx_greets_iFader5, fader5);
+    glUniform1f(shader_uniform_gfx_greets_iFader6, fader6);
+    glUniform1f(shader_uniform_gfx_greets_iFader7, fader7);
 #endif
 }
 else {

@@ -5,7 +5,8 @@
 #define t_revision (12)
 #define t_scaleballs (34.285701751708984)
 #define t_cubesausage (54)
-#define t_credits (72)
+#define t_greets (74)
+#define t_credits (90)
 #define duration (99)
 
 const double start_times[] = {
@@ -13,6 +14,7 @@ const double start_times[] = {
     t_revision,
     t_scaleballs,
     t_cubesausage,
+    t_greets,
     t_credits,
 };
 
@@ -21,6 +23,7 @@ const char *scene_names[] = {
     "Revision Graffiti",
     "Scale Balls",
     "Cube Sausage",
+    "Greetings",
     "Credits",
 };
 

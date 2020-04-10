@@ -8,7 +8,7 @@ const float path[npts] = float[npts](-0.500,0.145,-0.500,-0.029,-0.500,-0.029,-0
 void d5711(in vec2 x, out float ret)
 {
     float d;
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
     
     x *= .7;
     ret = 1.;
@@ -32,6 +32,6 @@ void d5711(in vec2 x, out float ret)
     
     ret = mix(ret, -ret, mod(n, 2.));
     
-    ret = max(d,-ret);
+//     ret = max(d,-ret);
     ret /= .7;
 }

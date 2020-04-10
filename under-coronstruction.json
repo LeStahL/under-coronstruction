@@ -25,10 +25,16 @@
             "t_start": 54
         },
         {
+            "name": "Greetings",
+            "prefix": "greets",
+            "t_end": 90,
+            "t_start": 74
+        },
+        {
             "name": "Credits",
             "prefix": "credits",
             "t_end": 99,
-            "t_start": 72
+            "t_start": 90
         }
     ]
 }

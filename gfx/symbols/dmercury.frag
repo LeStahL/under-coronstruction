@@ -7,7 +7,8 @@ void dpolygon(in vec2 x, in float N, out float d);
 
 void dmercury(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
+d = -1.;
     float da;
 
     x += .1*c.yx;
@@ -25,4 +26,6 @@ void dmercury(in vec2 x, out float d)
     d = max(d, -da);
     dbox(x+.2*c.yx, vec2(.4,.1),da);
     d = max(d, -da);
+    
+    d = -d;
 }

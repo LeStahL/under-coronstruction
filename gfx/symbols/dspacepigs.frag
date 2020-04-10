@@ -12,7 +12,7 @@ void dear(in vec2 x, out float d)
 
 void dspacepigs(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
     float da, d0;
     
     // Head
@@ -43,5 +43,6 @@ void dspacepigs(in vec2 x, out float d)
     dcircle(24.*x-vec2(5.,3.5),da);
     d0 = min(d0,da/24.);
     
-    d = max(d, -d0);
+//     d = max(d, -d0);
+    d = d0;
 }

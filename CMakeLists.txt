@@ -45,6 +45,7 @@ set(SHADER_FILES
         gfx/scaleballs.frag
         gfx/cubesausage.frag
         gfx/credits.frag
+        gfx/greets.frag
 )
 set(SHADER_SYMBOLS_PATH gfx/symbols/)
 set(STRINGS_FILE font/strings.txt)

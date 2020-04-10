@@ -8,7 +8,7 @@ void dpolygon(in vec2 x, in float N, out float d);
 
 void dschnappsgirls(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
     float da, d0;
     
     // Dress
@@ -66,5 +66,6 @@ void dschnappsgirls(in vec2 x, out float d)
     dcircle(24.*(x-vec2(-.25,.4)), da);
     d0 = min(d0, da/24.);
     
-    d = max(d, -d0);
+//     d = max(d, -d0);
+    d = d0;
 }

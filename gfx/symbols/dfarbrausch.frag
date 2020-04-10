@@ -6,7 +6,7 @@ void stroke(in float d0, in float s, out float d);
 
 void dfarbrausch(in vec2 x, out float d)
 {
-    dpolygon(.5*x,6.0,d);
+//     dpolygon(.5*x,6.0,d);
     float da, d0;
     
     x += vec2(.1,0.);
@@ -45,5 +45,6 @@ void dfarbrausch(in vec2 x, out float d)
     d0 = min(d0, da/5.);
     
     stroke(d0,.035, d0);
-    d = max(d, -d0);
+//     d = max(d, -d0);
+    d = d0;
 }
