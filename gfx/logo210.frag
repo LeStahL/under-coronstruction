@@ -20,6 +20,15 @@
 uniform float iTime;
 uniform vec2 iResolution;
 
+uniform float iFader0;
+uniform float iFader1;
+uniform float iFader2;
+uniform float iFader3;
+uniform float iFader4;
+uniform float iFader5;
+uniform float iFader6;
+uniform float iFader7;
+
 float iScale;
 
 void scale(out float s);
@@ -111,8 +120,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         
         if(s.y == 1.)
         {
-            // cube color
-            col = vec3(0.27,0.36,0.48);
+            col = vec3(0.27,0.36,0.68).gbr;
             col = .3*col
                 + .4*col * abs(dot(l,n))
                 + .6 * col * abs(pow(dot(reflect(-l,n),dir),3.));
@@ -147,7 +155,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
                 if(s.y == 1.)
                 {
-                    c1 = vec3(0.27,0.36,0.48);
+                    c1 = vec3(0.27,0.36,0.68).gbr;
                     c1 = .3*c1
                         + .4*c1 * abs(dot(l,n))
                         + .6 * c1 * abs(pow(dot(reflect(-l,n),dir),3.));
@@ -170,7 +178,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     }
     col = mix(col,c.xxx,smoothstep(0.,1.,iTime-11.));
     
-    col = mix(vec3(0.18,0.24,0.31), col, clamp(iTime,0.,1.));
+    col = mix(vec3(0.27,0.36,0.68).gbr, col, clamp(iTime,0.,1.));
     
     fragColor = vec4(clamp(col,0.,1.),1.0);
 }

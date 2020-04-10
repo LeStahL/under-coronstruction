@@ -1,22 +1,34 @@
 {
     "scenes": [
         {
-            "name": "Scale Balls",
-            "prefix": "scaleballs",
-            "t_end": 10,
+            "name": "Logo 210",
+            "prefix": "logo210",
+            "t_end": 12,
             "t_start": 0
         },
         {
             "name": "Revision Graffiti",
             "prefix": "revision",
             "t_end": 20,
-            "t_start": 10
+            "t_start": 12
+        },
+        {
+            "name": "Scale Balls",
+            "prefix": "scaleballs",
+            "t_end": 40,
+            "t_start": 20
         },
         {
             "name": "Cube Sausage",
             "prefix": "cubesausage",
-            "t_end": 130,
-            "t_start": 20
+            "t_end": 60,
+            "t_start": 40
+        },
+        {
+            "name": "Credits",
+            "prefix": "credits",
+            "t_end": 70,
+            "t_start": 60
         }
     ]
 }

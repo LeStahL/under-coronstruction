@@ -1,21 +1,27 @@
 #ifndef SCENES_HEADER
 #define SCENES_HEADER
 
-#define t_scaleballs (0)
-#define t_revision (10)
-#define t_cubesausage (20)
-#define duration (130)
+#define t_logo210 (0)
+#define t_revision (12)
+#define t_scaleballs (20)
+#define t_cubesausage (40)
+#define t_credits (60)
+#define duration (70)
 
 const double start_times[] = {
-    t_scaleballs,
+    t_logo210,
     t_revision,
+    t_scaleballs,
     t_cubesausage,
+    t_credits,
 };
 
 const char *scene_names[] = {
-    "Scale Balls",
+    "Logo 210",
     "Revision Graffiti",
+    "Scale Balls",
     "Cube Sausage",
+    "Credits",
 };
 
 const unsigned int nscenes = ARRAYSIZE(start_times);
