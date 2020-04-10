@@ -27,7 +27,7 @@
         {
             "name": "Credits",
             "prefix": "credits",
-            "t_end": 70,
+            "t_end": 95,
             "t_start": 60
         }
     ]

@@ -6,7 +6,7 @@
 #define t_scaleballs (20)
 #define t_cubesausage (40)
 #define t_credits (60)
-#define duration (70)
+#define duration (95)
 
 const double start_times[] = {
     t_logo210,

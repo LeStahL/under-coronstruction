@@ -13,18 +13,20 @@ float minus1hochN(int n) { return (1. - 2.*float(n % 2)); }
 float minus1hochNminus1halbe(int n) { return sin(.5*PI*float(n)); }
 float pseudorandom(float x) { return fract(sin(dot(vec2(x),vec2(12.9898,78.233))) * 43758.5453); }
 float fhelp(float x) { return 1. + .333*x; } // 1. + .33333*x + .1*x*x + .02381*x*x*x + .00463*x*x*x*x;
+float linmix(float x, float a, float b, float y0, float y1) { return mix(y0,y1,clamp(a*x+b,0.,1.)); }
+float s_atan(float a) { return .636 * atan(a); }
 float s_moothmin(float a, float k) {
     float ha = max(1.-2.*abs(abs(a)-1.), 0.);
     return a >= 0. ? min(a, 1.) - .5/6.*ha*ha*ha : max(a, -1.) + .5/6.*ha*ha*ha;
 }
 float s_moothmin(float a) { return s_moothmin(a,.5); }
 
-#define SONGLENGTH 88.5524
+#define SONGLENGTH 95.2403
 #define NTIME 3
-const float pos_B[3] = float[3](0.,16.,56.);
-const float pos_t[3] = float[3](0.,34.2857,87.619);
-const float pos_BPS[2] = float[2](.4667,.75);
-const float pos_SPB[2] = float[2](2.1427,1.3333);
+const float pos_B[3] = float[3](0.,16.,60.);
+const float pos_t[3] = float[3](0.,34.2857,94.2857);
+const float pos_BPS[2] = float[2](.4667,.7333);
+const float pos_SPB[2] = float[2](2.1427,1.3637);
 float BPS, SPB, BT;
 
 float Tsample;
@@ -54,15 +56,28 @@ float env_AHDSRexp(float x, float L, float A, float H, float D, float S, float R
     return (x < A ? att : x < A+H ? 1. : dec) * rel;
 }
 
+float waveshape(float s, float amt, float A, float B, float C, float D, float E)
+{
+    float w;
+    float m = sign(s);
+    s = abs(s);
+
+    if(s<A) w = B * smstep(0.,A,s);
+    else if(s<C) w = C + (B-C) * smstep(C,A,s);
+    else if(s<=D) w = s;
+    else if(s<=1.)
+    {
+        float _s = (s-D)/(1.-D);
+        w = D + (E-D) * (1.5*_s*(1.-.33*_s*_s));
+    }
+    else return 1.;
+
+    return m*mix(s,w,amt);
+}
+
 float sinshape(float x, float amt, float parts)
 {
     return (1.-amt) * x + amt * sign(x) * 0.5 * (1. - cos(parts*PI*x));
-}
-
-float parabellshape(float x, float amt, float pC, float pS, float bA, float bS)
-{
-    float xDist = (x-pC)*pS;
-    return clip(x + amt * pC * (xDist*xDist-1.)*(bA * exp(-bS*xDist*xDist) + (1.-bA) * float(abs(xDist) < 1.)) );
 }
 
 float comp_SAW(int N, float inv_N, float PW) {return inv_N * (1. - _sin(float(N)*PW));}
@@ -133,7 +148,7 @@ float QFM(float t, float f, float phase, float LV1, float LV2, float LV3, float 
     float OP4 = LV4 * _sin(PH4 + QFM_FB(PH4, FB4));
     float OP3 = LV3 * _sin(PH3 + QFM_FB(PH3, FB3) + LINK43*OP4);
     float OP2 = LV2 * _sin(PH2 + QFM_FB(PH2, FB2) + LINK42*OP4 + LINK32*OP3);
-    float OP1 = LV1 * _sin(PH1 + QFM_FB(PH1, FB1) + LINK41*OP4 + LINK31*OP3 + LINK32*OP2);
+    float OP1 = LV1 * _sin(PH1 + QFM_FB(PH1, FB1) + LINK41*OP4 + LINK31*OP3 + LINK21*OP2);
 
     float sum = OP1;
     if(LINK21 > 0.) sum += OP2;
@@ -143,9 +158,21 @@ float QFM(float t, float f, float phase, float LV1, float LV2, float LV3, float 
     return s_moothmin(sum);
 }
 
-float FM0_whatever(float B)
+float sfqm_vol(float _BEAT)
 {
-    return B<0 ? 0. : 2.;
+    return _BEAT<0 ? 0. : 1.;
+}
+float maceboss_vol(float B)
+{
+    return B<0. ? 0. : (B>=0. && B<4.) ? 0. : (B>=4. && B<6.) ? linmix(B, .5, -2., 0.0, 0.2) : (B>=6. && B<8.) ? linmix(B, .5, -3., 0.2, 0.4) : (B>=8. && B<12.) ? linmix(B, .25, -2., 0.4, 1.0) : 1.;
+}
+float pluck7short_vol(float B)
+{
+    return B<0. ? 0. : (B>=0. && B<1.5) ? .02 : (B>=1.5 && B<8.) ? linmix(B, .1538, -.2308, 0.02, 0.3) : (B>=8. && B<16.) ? linmix(B, .125, -1., 0.3, 0.7) : 1.;
+}
+float SUBvol(float B)
+{
+    return B<0. ? 0. : (B>=0. && B<1.) ? linmix(B, 1., 0., 16.0, 20.0) : 1.;
 }
 
 uniform float iBlockOffset;
@@ -179,9 +206,9 @@ float rfloat(int off)
 }
 
 #define NTRK 8
-#define NMOD 26
-#define NPTN 10
-#define NNOT 845
+#define NMOD 30
+#define NPTN 11
+#define NNOT 923
 #define NDRM 51
 
 int trk_sep(int index)      {return int(rfloat(index));}
@@ -250,7 +277,7 @@ vec2 mainSynth(float time)
 
             for(int _note = _noteL; _note <= _noteU; _note++)
             {
-                if(syn == 136)
+                if(syn == 139)
                 {
                     drum = int(note_pitch(_note));
                     rel = drum_rel(drum) + 1.e-3;
@@ -275,7 +302,7 @@ vec2 mainSynth(float time)
                 slide = note_slide(_note);
                 aux   = note_aux(_note);
 
-                if(syn == 136)
+                if(syn == 139)
                 {
                     env = trk_norm(trk) * theta(Bprog) * theta(L - Bprog);
                     if(drum == 0) { sidechain = min(sidechain, 1. - vel * (clamp(1.e4 * Bprog,0.,1.) - pow(Bprog/(L-rel),8.)));}
@@ -307,74 +334,65 @@ vec2 mainSynth(float time)
 
                     env = theta(Bprog) * (1. - smstep(Boff-rel, Boff, B));
                     if(syn == 0){amaysynL = _sin(f*_t); amaysynR = _sin(f*_t2);}
-                    else if(syn == 2){
+                    else if(syn == 10){
                         
-                        amaysynL = vel*QFM(_t,f,0.,1.,0.,0.,0.,1.,1.,1.,1.,(Bproc*.8*pseudorandom(Bon)+aux*pseudorandom(3.+f)*Bproc*(.5+.5+sin(64.*B))),0.,0.,0.,0.);
-                        amaysynR = vel*QFM(_t2,f,0.,1.,0.,0.,0.,1.,1.,1.,1.,(Bproc*.8*pseudorandom(Bon)+aux*pseudorandom(3.+f)*Bproc*(.5+.5+sin(64.*B))),0.,0.,0.,0.);
-                        env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),7.);
+                        amaysynL = .8*env_AHDSRexp(Bprog,L,.001,.3,.1,1.,.3)*(waveshape(clip(1.6*QFM((_t-0.0*(1.+2.*_sin(.15*_t))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8)
+      +waveshape(clip(1.6*QFM((_t-2.0e-03*(1.+2.*_sin(.15*_t))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8)
+      +waveshape(clip(1.6*QFM((_t-4.0e-03*(1.+2.*_sin(.15*_t))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8));
+                        amaysynR = .8*env_AHDSRexp(Bprog,L,.001,.3,.1,1.,.3)*(waveshape(clip(1.6*QFM((_t2-0.0*(1.+2.*_sin(.15*_t2))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8)
+      +waveshape(clip(1.6*QFM((_t2-2.0e-03*(1.+2.*_sin(.15*_t2))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8)
+      +waveshape(clip(1.6*QFM((_t2-4.0e-03*(1.+2.*_sin(.15*_t2))),f,0.,.00787*127.*pow(vel,12.*7.87e-3),.00787*112.*pow(vel,63.*7.87e-3),.00787*127.*pow(vel,26.*7.87e-3),.00787*96.*pow(vel,120.*7.87e-3),.5,1.,1.5,1.,.00787*0.,.00787*0.,.00787*0.,.00787*50.,8.)),.3,.2,.8,.4,.8,.8));
                     }
-                    else if(syn == 21){
+                    else if(syn == 22){
                         
-                        amaysynL = exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.01,0.,.1+.5*vel,.01,.4)*sinshape(clip((1.+exp(-11.*Bprog))*_tri(f*_t+.2*env_AHDSRexp(Bprog,L,.5,1.,.1,1.,0.)*clip((1.+3.)*_sq_(1.99*f*_t,.3+2.*vel+.2*(2.*fract(3.97*f*_t)-1.)))+.2*vel*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,0.)*(2.*fract(3.97*f*_t)-1.))),.01*aux*exp(-11.*Bprog),5.)
-      +.4*exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,0.)*clip((1.+3.)*_sq_(1.99*f*_t,.3+2.*vel+.2*(2.*fract(3.97*f*_t)-1.)))*env_AHDSRexp(Bprog,L,0.,0.,.2+.2*vel,.01,.4)
-      +.4*env_AHDSRexp(Bprog,L,0.,0.,.05,0.,0.)*lpnoise(_t + 0.,6000.+200.*note_pitch(_note));
-                        amaysynR = exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.01,0.,.1+.5*vel,.01,.4)*sinshape(clip((1.+exp(-11.*Bprog))*_tri(f*_t2+.2*env_AHDSRexp(Bprog,L,.5,1.,.1,1.,0.)*clip((1.+3.)*_sq_(1.99*f*_t2,.3+2.*vel+.2*(2.*fract(3.97*f*_t2)-1.)))+.2*vel*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,0.)*(2.*fract(3.97*f*_t2)-1.))),.01*aux*exp(-11.*Bprog),5.)
-      +.4*exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,0.)*clip((1.+3.)*_sq_(1.99*f*_t2,.3+2.*vel+.2*(2.*fract(3.97*f*_t2)-1.)))*env_AHDSRexp(Bprog,L,0.,0.,.2+.2*vel,.01,.4)
-      +.4*env_AHDSRexp(Bprog,L,0.,0.,.05,0.,0.)*lpnoise(_t2 + 0.,6000.+200.*note_pitch(_note));
-                        env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),2.);
+                        amaysynL = exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.01,0.,.1+.5*vel,.01,.4)*sinshape(clip((1.+exp(-11.*Bprog))*_tri(f*_t+.2*env_AHDSRexp(Bprog,L,.5,1.,.1,1.,.1)*clip((1.+3.)*_sq_(1.99*f*_t,.3+2.*vel+.2*(2.*fract(3.97*f*_t)-1.)))+.2*vel*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,.3)*(2.*fract(3.97*f*_t)-1.))),.01*aux*exp(-11.*Bprog),5.)
+      +.2*env_AHDSRexp(Bprog,L,.001,0.,.05,0.,.8)*lpnoise(_t + 0.,6000.+200.*note_pitch(_note))
+      +.4*exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,.3)*clip((1.+3.)*_sq_(1.99*f*_t,.3+2.*vel+.2*(2.*fract(3.97*f*_t)-1.)))*env_AHDSRexp(Bprog,L,.001,0.,.2+.2*vel,.01,.4);
+                        amaysynR = exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.01,0.,.1+.5*vel,.01,.4)*sinshape(clip((1.+exp(-11.*Bprog))*_tri(f*_t2+.2*env_AHDSRexp(Bprog,L,.5,1.,.1,1.,.1)*clip((1.+3.)*_sq_(1.99*f*_t2,.3+2.*vel+.2*(2.*fract(3.97*f*_t2)-1.)))+.2*vel*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,.3)*(2.*fract(3.97*f*_t2)-1.))),.01*aux*exp(-11.*Bprog),5.)
+      +.2*env_AHDSRexp(Bprog,L,.001,0.,.05,0.,.8)*lpnoise(_t2 + 0.,6000.+200.*note_pitch(_note))
+      +.4*exp(-11.*Bprog)*env_AHDSRexp(Bprog,L,.325,1.,.1,1.,.3)*clip((1.+3.)*_sq_(1.99*f*_t2,.3+2.*vel+.2*(2.*fract(3.97*f*_t2)-1.)))*env_AHDSRexp(Bprog,L,.001,0.,.2+.2*vel,.01,.4);
+                        env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),6.);
                     }
-                    else if(syn == 45){
-                        
-                        amaysynL = env_AHDSR(Bprog,L,.025,0.,.01,1.,.003)*sinshape(MADD(_t,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1408.+(939.*_sin_(2.*BT,.4))),10.,9.02,4.78,.02,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)
-      +.8*clip((1.+.5)*_sin(.499*f*_t))
-      +env_AHDSR(Bprog,L,.025,0.,.01,1.,.003)*.4*_sq_(1.01*f*_t,.95);
-                        amaysynR = env_AHDSR(Bprog,L,.025,0.,.01,1.,.003)*sinshape(MADD(_t2,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1408.+(939.*_sin_(2.*BT,.4))),10.,9.02,4.78,.02,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)
-      +.8*clip((1.+.5)*_sin(.499*f*_t2))
-      +env_AHDSR(Bprog,L,.025,0.,.01,1.,.003)*.4*_sq_(1.01*f*_t2,.95);
-                    }
-                    else if(syn == 58){
-                        
-                        amaysynL = (env_AHDSR(_t,tL,1e-3,0.,.063,.402,.003)*MADD(_t,f,0.,128,1,-.6,(1175.+(583.*_sin_(2.*B,.4))),24.,44.37,24.05,.015,.4*(.55+(.4*clip((1.+1.)*_sin(4.*B)))),0));
-                        amaysynR = (env_AHDSR(_t2,tL,1e-3,0.,.063,.402,.003)*MADD(_t2,f,0.,128,1,-.6,(1175.+(583.*_sin_(2.*B,.4))),24.,44.37,24.05,.015,.4*(.55+(.4*clip((1.+1.)*_sin(4.*B)))),0));
-                        env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),2.);
-                    }
-                    else if(syn == 108){
+                    else if(syn == 109){
                         time2 = time-.1; _t2 = _t-.1;
-                        amaysynL = (vel*sinshape(QFM(_t,f,0.,.00787*125.,.00787*env_AHDSR(Bprog,L,.0001,.047,.01,.404,0.)*20.,.00787*env_AHDSR(Bprog,L,.0001,.151,.071,.069,0.)*110.,.00787*env_AHDSR(Bprog,L,.0001,.232,.08,.003,0.)*65.,.999,1.,1.+.0799*(.5+(.5*_sin(.18*Bprog))),2.,.00787*109.,.00787*21.,.00787*94.,.00787*0.,11.),.03*aux,3.)*env_AHDSR(Bprog,L,.0001,.03,.167,.796,.114))
-      +_sq_(.501*f*_t,.4+.3*(.5+(.5*_sin(.8*Bprog))))
-      +.6*clip((1.+.2*aux)*_sin(.25*f*_t));
-                        amaysynR = (vel*sinshape(QFM(_t2,f,0.,.00787*125.,.00787*env_AHDSR(Bprog,L,.0001,.047,.01,.404,0.)*20.,.00787*env_AHDSR(Bprog,L,.0001,.151,.071,.069,0.)*110.,.00787*env_AHDSR(Bprog,L,.0001,.232,.08,.003,0.)*65.,.999,1.,1.+.0799*(.5+(.5*_sin(.18*Bprog))),2.,.00787*109.,.00787*21.,.00787*94.,.00787*0.,11.),.03*aux,3.)*env_AHDSR(Bprog,L,.0001,.03,.167,.796,.114))
-      +_sq_(.501*f*_t2,.4+.3*(.5+(.5*_sin(.8*Bprog))))
-      +.6*clip((1.+.2*aux)*_sin(.25*f*_t2));
+                        amaysynL = pluck7short_vol(BT)*((vel*sinshape(QFM(_t,f,0.,.00787*125.,.00787*env_AHDSR(Bprog,L,.0001,.047,.01,.404,0.)*20.,.00787*env_AHDSR(Bprog,L,.0001,.151,.071,.069,0.)*110.,.00787*env_AHDSR(Bprog,L,.0001,.232,.08,.003,0.)*65.,.999,1.,1.+.0799*(.5+(.5*_sin(.18*Bprog))),2.,.00787*109.,.00787*21.,.00787*94.,.00787*0.,11.),.03*aux,3.)*env_AHDSR(Bprog,L,.0001,.03,.167,.796,.114))+_sq_(.501*f*_t,.4+.3*(.5+(.5*_sin(.8*Bprog))))+.6*clip((1.+.2*aux)*_sin(.25*f*_t)));
+                        amaysynR = pluck7short_vol(BT)*((vel*sinshape(QFM(_t2,f,0.,.00787*125.,.00787*env_AHDSR(Bprog,L,.0001,.047,.01,.404,0.)*20.,.00787*env_AHDSR(Bprog,L,.0001,.151,.071,.069,0.)*110.,.00787*env_AHDSR(Bprog,L,.0001,.232,.08,.003,0.)*65.,.999,1.,1.+.0799*(.5+(.5*_sin(.18*Bprog))),2.,.00787*109.,.00787*21.,.00787*94.,.00787*0.,11.),.03*aux,3.)*env_AHDSR(Bprog,L,.0001,.03,.167,.796,.114))+_sq_(.501*f*_t2,.4+.3*(.5+(.5*_sin(.8*Bprog))))+.6*clip((1.+.2*aux)*_sin(.25*f*_t2)));
                     }
-                    else if(syn == 118){
+                    else if(syn == 119){
                         time2 = time-0.02; _t2 = _t-0.02;
                         amaysynL = (MADD(_t,f,0.,12,1,.92,2513.*env_AHDSRexp(Bprog,L,.31,0.,.1,1.,0.3),65.1,1.,3.,.008,.25,0.,1)*env_AHDSRexp(Bprog,L,.145+aux,.13,.38,.27,0.3));
                         amaysynR = (MADD(_t2,f,0.,12,1,.92,2513.*env_AHDSRexp(Bprog,L,.31,0.,.1,1.,0.3),65.1,1.,3.,.008,.25,0.,1)*env_AHDSRexp(Bprog,L,.145+aux,.13,.38,.27,0.3));
                         env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),4.);
                     }
-                    else if(syn == 132){
+                    else if(syn == 133){
                         
                         amaysynL = ((QFM((_t-0.0*(1.+3.*_sin(.1*_t))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.)+QFM((_t-4.0e-03*(1.+3.*_sin(.1*_t))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.)+QFM((_t-8.0e-03*(1.+3.*_sin(.1*_t))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.))*env_AHDSRexp(Bprog,L,.001,.034,.148,.677,.094));
                         amaysynR = ((QFM((_t2-0.0*(1.+3.*_sin(.1*_t2))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.)+QFM((_t2-4.0e-03*(1.+3.*_sin(.1*_t2))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.)+QFM((_t2-8.0e-03*(1.+3.*_sin(.1*_t2))),f,0.,.00787*110.,.00787*env_AHDSRexp(Bprog,L,.195,.003,.035,.383,0.)*78.,.00787*env_AHDSRexp(Bprog,L,.144,.062,.01,.425,0.)*47.,.00787*env_AHDSRexp(Bprog,L,.003,.018,.18,.126,0.)*70.,.5,1.,1.001,1.,.00787*118.,.00787*10.,.00787*103.,.00787*83.,5.))*env_AHDSRexp(Bprog,L,.001,.034,.148,.677,.094));
                     }
-                    else if(syn == 134){
+                    else if(syn == 135){
                         time2 = time-.5; _t2 = _t-.5;
                         amaysynL = .4*env_AHDSRexp(Bprog,L,.02,0.,.01,.9,.01)*(_sin(.5*f*floor(24333.*(_t-0.0*(1.+8.5*_sin(.2*_t)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t-0.0*(1.+8.5*_sin(.2*_t)))+.5)/13400.)
-      +_sin(.5*f*floor(24333.*(_t-1.0e-03*(1.+8.5*_sin(.2*_t)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t-1.0e-03*(1.+8.5*_sin(.2*_t)))+.5)/13400.));
+      +_sin(.5*f*floor(24333.*(_t-1.0e-03*(1.+8.5*_sin(.2*_t)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t-1.0e-03*(1.+8.5*_sin(.2*_t)))+.5)/13400.))*SUBvol(BT);
                         amaysynR = .4*env_AHDSRexp(Bprog,L,.02,0.,.01,.9,.01)*(_sin(.5*f*floor(24333.*(_t2-0.0*(1.+8.5*_sin(.2*_t2)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t2-0.0*(1.+8.5*_sin(.2*_t2)))+.5)/13400.)
-      +_sin(.5*f*floor(24333.*(_t2-1.0e-03*(1.+8.5*_sin(.2*_t2)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t2-1.0e-03*(1.+8.5*_sin(.2*_t2)))+.5)/13400.));
+      +_sin(.5*f*floor(24333.*(_t2-1.0e-03*(1.+8.5*_sin(.2*_t2)))+.5)/24333.)+_sin(.499*f*floor(13400.*(_t2-1.0e-03*(1.+8.5*_sin(.2*_t2)))+.5)/13400.))*SUBvol(BT);
+                    }
+                    else if(syn == 137){
+                        time2 = time-.005; _t2 = _t-.005;
+                        amaysynL = sfqm_vol(BT)*env_AHDSRexp(Bprog,L,.02,0.,.01,.95,.001)*s_atan(s_atan(5.*QFM(_t,f,0.,.00787*127.,.00787*50.*env_AHDSRexp(Bprog,L,.185,0.,.1,1.,.001),.00787*60.,.00787*0.,.25+.25*.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.5+.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.4999,1.,.00787*-255.,.00787*0.,.00787*0.,.00787*0.,9.))+s_atan(5.*QFM(_t,f,0.,.00787*127.,.00787*50.*env_AHDSRexp(Bprog,L,.185,0.,.1,1.,.001),.00787*60.,.00787*0.,.25+.25*.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.5+.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.4999,1.,.00787*-255.,.00787*0.,.00787*0.,.00787*0.,9.)));
+                        amaysynR = sfqm_vol(BT)*env_AHDSRexp(Bprog,L,.02,0.,.01,.95,.001)*s_atan(s_atan(5.*QFM(_t2,f,0.,.00787*127.,.00787*50.*env_AHDSRexp(Bprog,L,.185,0.,.1,1.,.001),.00787*60.,.00787*0.,.25+.25*.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.5+.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.4999,1.,.00787*-255.,.00787*0.,.00787*0.,.00787*0.,9.))+s_atan(5.*QFM(_t2,f,0.,.00787*127.,.00787*50.*env_AHDSRexp(Bprog,L,.185,0.,.1,1.,.001),.00787*60.,.00787*0.,.25+.25*.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.5+.04*env_AHDSRexp(Bprog,L,.225,0.,.1,1.,.001)*(.5+(.001*_sin(1.*Bprog))),.4999,1.,.00787*-255.,.00787*0.,.00787*0.,.00787*0.,9.)));
+                        env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),3.);
+                    }
+                    else if(syn == 138){
+                        
+                        amaysynL = (env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t))+.4*_sq_(1.01*f*_t,.95))*maceboss_vol(BT));
+                        amaysynR = (env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t2,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t2))+.4*_sq_(1.01*f*_t2,.95))*maceboss_vol(BT));
                     }
                     
                     sL += amtL * trk_norm(trk) * s_moothmin(clamp(env,0.,1.) * amaysynL);
                     sR += amtR * trk_norm(trk) * s_moothmin(clamp(env,0.,1.) * amaysynR);
                 }
             }
-            if(syn == 2){
-                sL = parabellshape(sL,FM0_whatever(BT),.8,13.,(1.+Bproc),1.);
-                sR = parabellshape(sR,FM0_whatever(BT),.8,13.,(1.+Bproc),1.);
-            }
-
+            
         }
     }
     float masterL = .1 * sidechain * sL + .67 * dL;
