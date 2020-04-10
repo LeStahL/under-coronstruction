@@ -235,8 +235,8 @@ void revision_texture(in vec2 uv, out vec3 col)
     vec2 dva = dv;
     float d, da, db;
     drevision(uv-.5*dv, d);
-    lfnoise(2.*ssize*uv, dv.x);
-    lfnoise(2.*ssize*uv-1337., dv.y);
+    lfnoise(2.*ssize*uv-.3*iTime, dv.x);
+    lfnoise(2.*ssize*uv-1337.-.3*iTime, dv.y);
     drevision(uv-.05*dv, da);
     da = abs(da)-.1;
     drevision(uv-.01*dv, db);
@@ -383,7 +383,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     // Gamma
     col = col + 4.* col * col;
 
-        
+    col = mix(c.xxx, col, clamp(iTime, 0.,1.));
     fragColor = vec4(clamp(col,0.,1.),1.);
 }
 
