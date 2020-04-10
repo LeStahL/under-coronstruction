@@ -104,14 +104,14 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         
         new.gba = mix(new.gba, mix(new.gba,c.xxx,.5), sm(d));
         stroke(d-.002, .002, d);
-        new.gba = mix(new.gba, vec3(1.00,0.40,0.39), sm(d));
+        new.gba = mix(new.gba, vec3(1.00,0.40,0.39).grb, sm(d));
 
         // Add time overlay
-        dtime((uv-.45*vec2(.975*a,1.05)), iTime, .01, d);
+        dtime((uv-.45*vec2(.975*a,1.03)), iTime, .01, d);
         new.gba = mix(new.gba, c.xxx, sm(d));
         
         // Add exact millisecond
-        dint(uv-.45*vec2(.975*a,1.0), floor(1.e3*fract(iTime)), .01, 4., d);
+        dint(uv-.45*vec2(.975*a,.98), floor(1.e3*fract(iTime)), .01, 4., d);
 //         new.gba = mix(new.gba, vec3(1.00,0.40,0.39), sm(d));
         stroke(d-.001, .0005, d);
         new.gba = mix(new.gba, c.xxx, sm(d));

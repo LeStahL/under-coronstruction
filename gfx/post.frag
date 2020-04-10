@@ -126,131 +126,136 @@ void smoothmin(in float a, in float b, in float k, out float dst)
     dst = min( a, b ) - h*h*h*k*(1.0/6.0);
 }
 
-void scene(in vec3 x, out vec2 sdf)
-{
-    sdf = x.z*c.xy;
-    const float r = .025;
-    vec2 y = mod(x.xy, r)-.5*r;
-    float yi = (x.y-y.y)/r;
-    x.x += .5*r*mod(yi,2.);
-    y = mod(x.xy, r)-.5*r;
-    float d = length(y)-.25*r;
-    zextrude(x.z, d, .005, d);
-    smoothmin(sdf.x, d, .01, sdf.x);
-    
-//     float d =
-}
+// void scene(in vec3 x, out vec2 sdf)
+// {
+//     sdf = x.z*c.xy;
+//     const float r = .025;
+//     vec2 y = mod(x.xy, r)-.5*r;
+//     float yi = (x.y-y.y)/r;
+//     x.x += .5*r*mod(yi,2.);
+//     y = mod(x.xy, r)-.5*r;
+//     float d = length(y)-.25*r;
+//     zextrude(x.z, d, .005, d);
+//     smoothmin(sdf.x, d, .01, sdf.x);
+//     
+// //     float d =
+// }
+// 
+// void normal(in vec3 x, out vec3 n, in float dx)
+// {
+//     vec2 s, na;
+//     
+//     scene(x,s);
+//     scene(x+dx*c.xyy, na);
+//     n.x = na.x;
+//     scene(x+dx*c.yxy, na);
+//     n.y = na.x;
+//     scene(x+dx*c.yyx, na);
+//     n.z = na.x;
+//     n = normalize(n-s.x);
+// }
 
-void normal(in vec3 x, out vec3 n, in float dx)
-{
-    vec2 s, na;
-    
-    scene(x,s);
-    scene(x+dx*c.xyy, na);
-    n.x = na.x;
-    scene(x+dx*c.yxy, na);
-    n.y = na.x;
-    scene(x+dx*c.yyx, na);
-    n.z = na.x;
-    n = normalize(n-s.x);
-}
-
-void glanz(in vec2 uv, inout vec3 col)
-{
-    float phi = atan(uv.y, uv.x), 
-        r = length(uv);
-    col = mix(2.*c.xxx, col, smoothstep(0.,(.5+.5*pow(sin(2.2*pi*phi),3.))*.03, length(uv)));
-}
+// void glanz(in vec2 uv, inout vec3 col)
+// {
+//     float phi = atan(uv.y, uv.x), 
+//         r = length(uv);
+//     col = mix(2.*c.xxx, col, smoothstep(0.,(.5+.5*pow(sin(2.2*pi*phi),3.))*.03, length(uv)));
+// }
 
 void main()
 {
     vec2 uv = (gl_FragCoord.xy -.5*iResolution.xy)/iResolution.y;
     vec3 col = c.yyy;
  
-    vec2 s;
-    vec3 o = c.yyx,
-        r = c.xyy,
-        t = c.yyy, 
-        u = cross(normalize(t-o),-r),
-        dir,
-        n, 
-        x,
-        c1 = c.yyy,
-        c2 =  texture(iChannel0, gl_FragCoord.xy/iResolution.xy).rgb,
-        l;
-    int N = 250,
-        i;
-    float d = 0.;
+//     vec2 s;
     
-    t = uv.x * r + uv.y * u;
-    dir = normalize(t-o);
+//         o = c.yyx,
+//         r = c.xyy,
+//         t = c.yyy, 
+//         u = cross(normalize(t-o),-r),
+//         dir,
+//         n, 
+//         x,
+//         c1 = c.yyy,
+       vec3 c2 =  texture(iChannel0, gl_FragCoord.xy/iResolution.xy).rgb;
+//         l;
+//     int N = 250,
+//         i;
+//     float d = 0.;
+//     
+//     t = uv.x * r + uv.y * u;
+//     dir = normalize(t-o);
+//     
+//     d = -(o.z-.01)/dir.z;
+//     
+//     for(i = 0; i<N; ++i)
+//     {
+//         x = o + d * dir;
+//         scene(x,s);
+//         if(s.x < 1.e-4) break;
+// //         d += s.x<1.e-2?min(s.x,1.e-2):s.x;
+// //         d += min(s.x, 5.e-3);
+//         d += s.x;
+//     }
+//     
+//     if(i<N)
+//     {
+//         normal(x, n, 5.e-4);
+//         l = normalize(x+.5*n);
+//         col = .7*vec3(0.16,0.02,0.40);
+//         col = .5*col*c2;
+//         float na;
+//         mfnoise(uv, 3.,300., .25, na);
+//         
+//         col = mix(col, 4.*col, clamp(dot(c.yxy, n),0.,1.));
+//         col = mix(col, 2.*col, clamp(dot(c.xxy, n),0.,1.));
+//         col = mix(col, .55*c.xxx, .8+.2*na);
+//             col = .1*col 
+//                 + .8*col*col*dot(l, n)
+//                 + 3.4*col*col*pow(abs(dot(reflect(l,n),dir)),1.);
+//         col = clamp(col, 0., 1.);
+//         col = 1.*col*col*col;
+// //         col = mix(col, col*col, );
+// //         col = col*col*col;
+//     }
+//     else col = c.xyy;
+//     float foo;
+//     
+//     // lower decoration
+//     cnoise(4.*uv.x, foo);
+//     foo = uv.y+1.-.1*foo;
+//     col = mix(col,.6*(col*col*col+.4*c.yyx), sm(foo-.51));
+// 
+//     // upper decoration
+//     cnoise(4.*uv.x-1337., foo);
+//     foo = uv.y-1.+.1*foo;
+//     col = mix(.6*(col*col*col+.4*c.yyx), col, sm(foo+.51));
+// 
+//     col = col*length(col)/sqrt(3.)*c.xxx;
+//     c1 = col;
+//     dteam210(1.1*vec2(1.3,4.)*(uv-.4375*c.yx-.38*c.xy), d);
+//     col = mix(col, mix(col,c.yyy,.7), sm((d-.02)/4.));
+//     d+=.002;
+//     col = mix(col, mix(col, vec3(1.,.3,.1)*4.*c1*c.xxx, .9), sm(d/4.));
+//     col = mix(col,2.*c.xxx, sm((abs(d)-.002))*4.);
+// //     col = max(c1,col);
+// //     d = abs(d-.01)-.005;
+// //     col = mix(col, c.xxx, sm(abs(d-.003)-.001));
+//     
+//     cnoise(4.*uv.x - 2337., foo);
+//     
+//     col = mix(col, c2, sm(abs(x.y+.025)-.05*foo-.375));
+//     col = mix(col, c.xxx, sm(abs(abs(x.y+.025)-.05*foo-.375)-.002));
+//     col = mix(col, 2.*vec3(0.79,0.03,0.33), sm(abs(abs(x.y+.025)-+.05*foo-.372)-.001));
+//  
+//     glanz((uv-.47*c.yx-.73*c.xy), col);
+//     glanz((uv-.47*c.yx-.03*c.xy), col);
+// //     glanz(vec2(1.3,4.)*(uv-.42*c.yx-.23*c.xy), col);
+// //     glanz(vec2(1.3,4.)*(uv-.43*c.yx-.53*c.xy), col);
+    col = c2;
     
-    d = -(o.z-.01)/dir.z;
-    
-    for(i = 0; i<N; ++i)
-    {
-        x = o + d * dir;
-        scene(x,s);
-        if(s.x < 1.e-4) break;
-//         d += s.x<1.e-2?min(s.x,1.e-2):s.x;
-//         d += min(s.x, 5.e-3);
-        d += s.x;
-    }
-    
-    if(i<N)
-    {
-        normal(x, n, 5.e-4);
-        l = normalize(x+.5*n);
-        col = .7*vec3(0.16,0.02,0.40);
-        col = .5*col*c2;
-        float na;
-        mfnoise(uv, 3.,300., .25, na);
-        
-        col = mix(col, 4.*col, clamp(dot(c.yxy, n),0.,1.));
-        col = mix(col, 2.*col, clamp(dot(c.xxy, n),0.,1.));
-        col = mix(col, .55*c.xxx, .8+.2*na);
-            col = .1*col 
-                + .8*col*col*dot(l, n)
-                + 3.4*col*col*pow(abs(dot(reflect(l,n),dir)),1.);
-        col = clamp(col, 0., 1.);
-        col = 1.*col*col*col;
-//         col = mix(col, col*col, );
-//         col = col*col*col;
-    }
-    else col = c.xyy;
-    float foo;
-    
-    // lower decoration
-    cnoise(4.*uv.x, foo);
-    foo = uv.y+1.-.1*foo;
-    col = mix(col,.6*(col*col*col+.4*c.yyx), sm(foo-.51));
-
-    // upper decoration
-    cnoise(4.*uv.x-1337., foo);
-    foo = uv.y-1.+.1*foo;
-    col = mix(.6*(col*col*col+.4*c.yyx), col, sm(foo+.51));
-
-    col = col*length(col)/sqrt(3.)*c.xxx;
-    c1 = col;
-    dteam210(1.1*vec2(1.3,4.)*(uv-.4375*c.yx-.38*c.xy), d);
-    col = mix(col, mix(col,c.yyy,.7), sm((d-.02)/4.));
-    d+=.002;
-    col = mix(col, mix(col, vec3(1.,.3,.1)*4.*c1*c.xxx, .9), sm(d/4.));
-    col = mix(col,2.*c.xxx, sm((abs(d)-.002))*4.);
-//     col = max(c1,col);
-//     d = abs(d-.01)-.005;
-//     col = mix(col, c.xxx, sm(abs(d-.003)-.001));
-    
-    cnoise(4.*uv.x - 2337., foo);
-    
-    col = mix(col, c2, sm(abs(x.y+.025)-.05*foo-.375));
-    col = mix(col, c.xxx, sm(abs(abs(x.y+.025)-.05*foo-.375)-.002));
-    col = mix(col, 2.*vec3(0.79,0.03,0.33), sm(abs(abs(x.y+.025)-+.05*foo-.372)-.001));
- 
-    glanz((uv-.47*c.yx-.73*c.xy), col);
-    glanz((uv-.47*c.yx-.03*c.xy), col);
-//     glanz(vec2(1.3,4.)*(uv-.42*c.yx-.23*c.xy), col);
-//     glanz(vec2(1.3,4.)*(uv-.43*c.yx-.53*c.xy), col);
+    // Add stripes
+    col = mix(col, mix(col,c.yyy,.7), sm(abs(uv.y-.45)-.04));
     
     // grid lines
     vec2 y = mod(uv, .025)-.0125;
