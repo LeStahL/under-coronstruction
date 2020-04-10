@@ -21,12 +21,12 @@ float s_moothmin(float a, float k) {
 }
 float s_moothmin(float a) { return s_moothmin(a,.5); }
 
-#define SONGLENGTH 95.2403
+#define SONGLENGTH 99.5714
 #define NTIME 3
-const float pos_B[3] = float[3](0.,16.,60.);
-const float pos_t[3] = float[3](0.,34.2857,94.2857);
-const float pos_BPS[2] = float[2](.4667,.7333);
-const float pos_SPB[2] = float[2](2.1427,1.3637);
+const float pos_B[3] = float[3](0.,16.,61.);
+const float pos_t[3] = float[3](0.,34.2857,98.5714);
+const float pos_BPS[2] = float[2](.4667,.7);
+const float pos_SPB[2] = float[2](2.1427,1.4286);
 float BPS, SPB, BT;
 
 float Tsample;
@@ -172,7 +172,7 @@ float pluck7short_vol(float B)
 }
 float SUBvol(float B)
 {
-    return B<0. ? 0. : (B>=0. && B<1.) ? linmix(B, 1., 0., 16.0, 20.0) : 1.;
+    return B<0. ? 0. : (B>=16. && B<22.) ? linmix(B, .1667, -2.6667, 0.0, 1.0) : 1.;
 }
 
 uniform float iBlockOffset;
