@@ -19,6 +19,10 @@ const vec3 c = vec3(1.,0.,-1.);
 const float pi = acos(-1.);
 const float ssize = 12.;
 float zup = .4;
+float nBeats, iScale;
+
+void scale(out float s);
+void nbeats(out float s, in int index);
 
 void rand(in vec2 x, out float n)
 {
@@ -173,15 +177,17 @@ void main_scene(in vec3 x, out vec2 sdf)
 
     sdf = vec2(mix(x.z,x.z-.005, sm(d)), 0.); // Floor
     
+    x.z -= .4*iScale;
+    
     vec3 r;
     float n,
         a = iResolution.x / iResolution.y,
         rs = .2;
     for(float i = 0.; i < 3.; ++i)
     {
-        rand(i*c.xx+1337., r.x);
-        rand(i*c.xx+5337., r.y);
-        rand(i*c.xx+3337., r.z);
+        rand(i*c.xx+1337.+nBeats, r.x);
+        rand(i*c.xx+5337.+nBeats, r.y);
+        rand(i*c.xx+3337.+nBeats, r.z);
         
         vec2 pt = vec2(atan(x.y,x.x), acos(x.z)/rs/r.z);
         mfnoise(vec2(2.,1.)*pt, 3., 300., .15, n);
@@ -220,7 +226,7 @@ void colorize_floor(in vec3 x, in vec3 n, inout vec3 col)
     dhexagonpattern(psize*x.xy, d, hpi);
     d /= psize;
     d = abs(-d)-.01;
-    rand(hpi,r);
+    rand(hpi+nBeats,r);
     col = mix(mix(.6,1.,r)*c.xxx,.7*c.xxx, sm(d));
 }
 
@@ -238,8 +244,8 @@ void illuminate(in vec3 x, in vec3 n, in vec3 dir, in vec3 l, inout vec3 col, in
     {
         vec3 c1;
         colorize_balls(x, n, col);
-        colorize_balls(x+.5, n, c1);
-        col = mix(col, c1, smoothstep(iFader0,1.,abs(dot(n, c.xyy))));
+        colorize_balls(x+mix(.5,2.,iScale), n, c1);
+        col = mix(col, c1, smoothstep(iScale,1.,abs(dot(n, c.xyy))));
 //         col = c.xxy;
         col = .1*col
             + mix(.5,1.,step(fract(iTime),.5))*col*dot(l, n)
@@ -259,7 +265,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y,
         s, ss,
         s0;
-        
+    
+    nbeats(nBeats, 1);
+    scale(iScale);
 //     zup = .4011;
 //     zup = .3989;
     zup = .4;
@@ -374,6 +382,12 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 //     col = .5*col
 //         + .7*col*dot(l, na)
 //         + 1.8*col*pow(abs(dot(reflect(l,na),dir)),2.);
+        
+    
+//     rand(re*c.xx, re);
+//     if(re<.3)col = col.gbr;
+//     else if(re < .6)col = col.brg;
+//     col = mix(col, c.xyy, mod(re,2.));
 
     // Gamma
     col = 4.* col * col;

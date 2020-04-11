@@ -180,6 +180,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     
     col = mix(vec3(0.27,0.36,0.68).gbr, col, clamp(iTime,0.,1.));
     col = mix(col, c.xxx, clamp(iTime-11., 0.,1.));
+    
+    col = mix(c.yyy, col, smoothstep(0.,5., iTime));
+    
     fragColor = vec4(clamp(col,0.,1.),1.0);
 }
 

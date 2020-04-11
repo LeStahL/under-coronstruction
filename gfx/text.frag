@@ -134,8 +134,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         new.gba = mix(new.gba, c.xxx, sm(abs(d-.109)-.002));
     }
     
-    new.gba = mix(c.yyy, new.gba, smoothstep(0.,5.,iTime));
-    new.gba = mix(new.gba, c.yyy, smoothstep(184., 186., iTime));
+//     new.gba = mix(c.yyy, new.gba, smoothstep(0.,5.,iTime));
+//     new.gba = mix(new.gba, c.yyy, smoothstep(184., 186., iTime));
     
 //     if(iTime < 20.)
 //     {
