@@ -3,11 +3,11 @@
 
 #define t_logo210 (0)
 #define t_revision (12)
-#define t_scaleballs (34.285701751708984)
-#define t_cubesausage (54)
-#define t_greets (74)
-#define t_credits (90)
-#define duration (99)
+#define t_scaleballs (35.83209991455078)
+#define t_cubesausage (58.68920135498047)
+#define t_greets (81.54630279541016)
+#define t_credits (92.97489929199219)
+#define duration (101)
 
 const double start_times[] = {
     t_logo210,

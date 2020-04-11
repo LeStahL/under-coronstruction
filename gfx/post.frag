@@ -27,7 +27,9 @@ out vec4 gl_FragColor;
 const vec3 c = vec3(1.,0.,-1.);
 const float pi = acos(-1.);
 
-void scale(out float s);
+float iScale, nBeats;
+void scale(in float time, out float s);
+void nbeats(in float time, out float n);;
 
 void rand(in vec2 x, out float n)
 {
@@ -123,8 +125,7 @@ void main()
     // Scan lines
     col += vec3(0., 0.05, 0.1)*sin(uv.y*1050.+ 5.*iTime);
     
-    float iScale;
-    scale(iScale);
+    scale(iTime,iScale);
     col += col*iScale;
     
     gl_FragColor = vec4(clamp(col, 0.,1.), 1.);

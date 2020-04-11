@@ -9,32 +9,32 @@
         {
             "name": "Revision Graffiti",
             "prefix": "revision",
-            "t_end": 34.285701751708984,
+            "t_end": 35.83209991455078,
             "t_start": 12
         },
         {
             "name": "Scale Balls",
             "prefix": "scaleballs",
-            "t_end": 54,
-            "t_start": 34.285701751708984
+            "t_end": 58.68920135498047,
+            "t_start": 35.83209991455078
         },
         {
             "name": "Cube Sausage",
             "prefix": "cubesausage",
-            "t_end": 74,
-            "t_start": 54
+            "t_end": 81.54630279541016,
+            "t_start": 58.68920135498047
         },
         {
             "name": "Greetings",
             "prefix": "greets",
-            "t_end": 90,
-            "t_start": 74
+            "t_end": 92.97489929199219,
+            "t_start": 81.54630279541016
         },
         {
             "name": "Credits",
             "prefix": "credits",
-            "t_end": 99,
-            "t_start": 90
+            "t_end": 101,
+            "t_start": 92.97489929199219
         }
     ]
 }

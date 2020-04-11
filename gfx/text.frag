@@ -22,9 +22,9 @@ uniform vec2 iResolution;
 uniform sampler2D iChannel0, iFont;
 uniform float iFSAA;
 
-float iScale;
-
-void scale(out float s);
+float iScale, nBeats;
+void scale(in float time, out float s);
+void nbeats(in float time, out float n);
 
 out vec4 gl_FragColor;
 
@@ -61,7 +61,9 @@ void dvoronoi(in vec2 x, out float d, out vec2 p, out float control_distance);
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
-    scale(iScale);
+    scale(iTime, iScale);
+    nbeats(iTime, nBeats);
+    
     a = iResolution.x/iResolution.y;
     vec2 uv = fragCoord/iResolution.yy-0.5*vec2(a, 1.0);
     

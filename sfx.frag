@@ -22,12 +22,12 @@ float s_moothmin(float a, float k) {
 }
 float s_moothmin(float a) { return s_moothmin(a,.5); }
 
-#define SONGLENGTH 99.5714
-#define NTIME 3
-const float pos_B[3] = float[3](0.,16.,61.);
-const float pos_t[3] = float[3](0.,34.2857,98.5714);
-const float pos_BPS[2] = float[2](.4667,.7);
-const float pos_SPB[2] = float[2](2.1427,1.4286);
+#define SONGLENGTH 102.4749
+#define NTIME 6
+const float pos_B[6] = float[6](0.,12.,14.,16.,17.,62.);
+const float pos_t[6] = float[6](0.,25.7143,30.2426,35.0426,35.8321,100.1178);
+const float pos_BPS[5] = float[5](.4667,.4417,.4167,1.2666,.7);
+const float pos_SPB[5] = float[5](2.1427,2.264,2.3998,.7895,1.4286);
 float BPS, SPB, BT;
 
 float Tsample;
@@ -181,11 +181,11 @@ float _BOOMENV2(float t){return t <=.259? linmix(t,3.861,0.,0.,1.):t <=.868? lin
 float _BOOMENV3(float t){return t <=.62? linmix(t,1.6129,0.,0.,1.):t <=1.899? linmix(t,.7819,-.4848,1.,0.):0.;}
 float maceboss_vol(float B)
 {
-    return B<0. ? 0. : (B>=0. && B<4.) ? 0. : (B>=4. && B<6.) ? linmix(B, .5, -2., 0.0, 0.2) : (B>=6. && B<8.) ? linmix(B, .5, -3., 0.2, 0.4) : (B>=8. && B<12.) ? linmix(B, .25, -2., 0.4, 1.0) : 1.;
+    return B<0. ? 0. : (B>=0. && B<4.) ? 0. : (B>=4. && B<6.) ? linmix(B, .5, -2., 0.0, 0.2) : (B>=6. && B<8.) ? linmix(B, .5, -3., 0.2, 0.4) : (B>=8. && B<12.) ? linmix(B, .25, -2., 0.4, 1.0) : (B>=14. && B<16.) ? linmix(B, .5, -7., 1.0, 0.5) : 1.;
 }
 float pluck7short_vol(float B)
 {
-    return B<0. ? 0. : (B>=0. && B<1.5) ? .02 : (B>=1.5 && B<8.) ? linmix(B, .1538, -.2308, 0.02, 0.3) : (B>=8. && B<16.) ? linmix(B, .125, -1., 0.3, 0.7) : 1.;
+    return B<0. ? 0. : (B>=0. && B<1.5) ? .02 : (B>=1.5 && B<8.) ? linmix(B, .1538, -.2308, 0.02, 0.3) : (B>=8. && B<15.) ? linmix(B, .1429, -1.1429, 0.3, 0.7) : (B>=15. && B<16.) ? linmix(B, 1., -15., 0.7, 0.2) : 1.;
 }
 float SUBvol(float B)
 {
@@ -223,9 +223,9 @@ float rfloat(int off)
 }
 
 #define NTRK 10
-#define NMOD 66
-#define NPTN 16
-#define NNOT 1079
+#define NMOD 74
+#define NPTN 18
+#define NNOT 1092
 #define NDRM 52
 
 int trk_sep(int index)      {return int(rfloat(index));}
@@ -458,8 +458,8 @@ env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),3.);
                     }
                     else if(syn == 138){
                         
-                        amaysynL = (env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t))+.4*_sq_(1.01*f*_t,.95))*maceboss_vol(BT));
-                        amaysynR = (env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t2,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t2))+.4*_sq_(1.01*f*_t2,.95))*maceboss_vol(BT));
+                        amaysynL = maceboss_vol(BT)*(env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t))+.4*_sq_(1.01*f*_t,.95)));
+                        amaysynR = maceboss_vol(BT)*(env_AHDSR(Bprog,L,.007,0.,.01,1.,.01)*(sinshape(MADD(_t2,.5*f,0.,256,2,1.+.9*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),(1088.+(863.*_sin_(2.*BT,.4))),10.,5.37,3.85,.005,.4*(.55+(.4*clip((1.+1.)*_sin(4.*BT)))),0.,0.),1.,3.)+.8*clip((1.+.5)*_sin(.499*f*_t2))+.4*_sq_(1.01*f*_t2,.95)));
                     }
                     
                     sL += amtL * trk_norm(trk) * s_moothmin(clamp(env,0.,1.) * amaysynL);
@@ -469,8 +469,8 @@ env = theta(Bprog)*pow(1.-smstep(Boff-rel, Boff, B),3.);
             
         }
     }
-    float masterL = .08000000000000002 * sidechain * sL + .4 * dL;
-    float masterR = .08000000000000002 * sidechain * sR + .4 * dR;
+    float masterL = .08 * sidechain * sL + .4 * dL;
+    float masterR = .08 * sidechain * sR + .4 * dR;
     return vec2(
         masterL,
         masterR);

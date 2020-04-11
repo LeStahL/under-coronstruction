@@ -19,6 +19,16 @@ const float pi = acos(-1.);
 const float ssize = 12.;
 float zup = .4;
 
+float iScale, nBeats;
+void scale(in float time, out float s);
+void nbeats(in float time, out float n);
+
+float beats;
+void nbeats(out float s)
+{
+    s = round((iTime+74.)/ 0.35715 );
+}
+
 void stroke(in float d0, in float s, out float d)
 {
     d = abs(d0)-s;
@@ -417,6 +427,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         s, ss,
         s0;
         
+    nbeats(81.5463+iTime,nBeats);
+    scale(81.5463+iTime,iScale);    
 //     zup = .4011;
 //     zup = .3989;
     zup = .4;

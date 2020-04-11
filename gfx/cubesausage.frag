@@ -20,6 +20,10 @@ const float pi = acos(-1.);
 const float ssize = 12.;
 float zup = .4;
 
+float iScale, nBeats;
+void scale(in float time, out float s);
+void nbeats(in float time, out float n);
+
 void rand(in vec2 x, out float n)
 {
     x += 400.;
@@ -273,7 +277,7 @@ void main_scene(in vec3 x, out vec2 sdf)
     float p = mod(atan(z.y,z.x),div)-.5*div,
         pj = atan(z.y,z.x)-p,
         pjf = floor(pj/div);
-    vec2 y = vec2(.3*cos(pj), .3*sin(pj));
+    vec2 y = vec2((.3+.2*iScale)*.3*cos(pj), (.3+.2*iScale)*.3*sin(pj));
     
     d = length(z-y-.1*r.yz)-.1-.1*r.x;
 //     sdf = vec2(d,0.);
@@ -408,7 +412,11 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y,
         s, ss,
         s0;
-        
+    
+    nbeats(58.6892+iTime,nBeats);
+    scale(58.6892+iTime,iScale);
+
+    
 //     zup = .4011;
 //     zup = .3989;
     zup = .4;

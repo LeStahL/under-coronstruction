@@ -19,10 +19,11 @@ const vec3 c = vec3(1.,0.,-1.);
 const float pi = acos(-1.);
 const float ssize = 12.;
 float zup = .4;
-float nBeats, iScale;
 
-void scale(out float s);
-void nbeats(out float s, in int index);
+float iScale, nBeats;
+void scale(in float time, out float s);
+void nbeats(in float time, out float n);
+
 
 void rand(in vec2 x, out float n)
 {
@@ -266,8 +267,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         s, ss,
         s0;
     
-    nbeats(nBeats, 1);
-    scale(iScale);
+    nbeats(35.8321+iTime,nBeats);
+    scale(35.8321+iTime,iScale);
 //     zup = .4011;
 //     zup = .3989;
     zup = .4;

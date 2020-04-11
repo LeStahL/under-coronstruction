@@ -33,8 +33,8 @@ for line in lines:
         pos_t = [ float(entry) for entry in line ]
 
 print('#version 130')
-print('uniform float iTime;')
-print('void scale(out float s)')
+#print('uniform float iTime;')
+print('void scale(in float iTime, out float s)')
 print('{')
 nb_all = 0
 for i in range(len(pos_B)-1):
@@ -51,18 +51,18 @@ for i in range(len(pos_B)-1):
     print('    }')
 print('}')
     
-print('void nbeats(out float s, in int index)')
+print('void nbeats(in float iTime, out float s)')
 print('{')
 nb_all = 0
 for i in range(len(pos_B)-1):
     t_start = pos_t[i]
     t_end = pos_t[i+1]
     spb = pos_SPB[i]/4.
-    print('    if(index == ', i, ')')
-    #print('    if(iTime >= ',t_start,' && iTime < ',t_end,')')
+    #print('    if(index == ', i, ')')
+    print('    if(iTime >= ',t_start,' && iTime < ',t_end,')')
     print('    {')
     #print('        s = floor(iTime-',t_start,'-mod(iTime-',t_start,',',spb,'));')
-    print('        s = round(iTime/',spb,');')
+    print('        s = round((iTime-',t_start,')/',spb,');')
     #print('        s = smoothstep(',-spb/12.,',0.,s)*(1.-smoothstep(0.,',spb/4.,',s));')
     print('    }')
 print('}')
