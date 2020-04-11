@@ -19,7 +19,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-const char *demoname = "Unsafe";
+const char *demoname = "Corona";
 
 #include "config.h"
 #include "engine/renderer.h"

@@ -178,7 +178,7 @@ void main_scene(in vec3 x, out vec2 sdf)
 
     sdf = vec2(mix(x.z,x.z-.005, sm(d)), 0.); // Floor
     
-    x.z -= .4*iScale;
+    x.z -= .2*iScale;
     
     vec3 r;
     float n,

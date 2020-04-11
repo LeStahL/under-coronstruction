@@ -277,7 +277,7 @@ void main_scene(in vec3 x, out vec2 sdf)
     float p = mod(atan(z.y,z.x),div)-.5*div,
         pj = atan(z.y,z.x)-p,
         pjf = floor(pj/div);
-    vec2 y = vec2((.3+.2*iScale)*.3*cos(pj), (.3+.2*iScale)*.3*sin(pj));
+    vec2 y = vec2((.7+.2*iScale)*.3*cos(pj), (.7+.2*iScale)*.3*sin(pj));
     
     d = length(z-y-.1*r.yz)-.1-.1*r.x;
 //     sdf = vec2(d,0.);
@@ -300,18 +300,18 @@ void main_scene(in vec3 x, out vec2 sdf)
         if(rda >.5) 
         {
             dbox3(ar, .002+.33*rd*msize*c.xxx, d);
-            add(sdf, vec2(d,2.+mod(pjf,4.)), sdf);
+            add(sdf, vec2(d,2.+mod(pjf+nBeats,4.)), sdf);
             dbox3(ar, .002+.33*rd*msize*vec3(.6,.6,1.05), d);
-            add(sdf, vec2(d, 2.+mod(pjf+1., 4.)), sdf);
+            add(sdf, vec2(d, 2.+mod(pjf+nBeats+1., 4.)), sdf);
             dbox3(ar, .002+.33*rd*msize*vec3(.6,1.05,.6), d);
-            add(sdf, vec2(d, 2.+mod(pjf+1., 4.)), sdf);
+            add(sdf, vec2(d, 2.+mod(pjf+nBeats+1., 4.)), sdf);
             dbox3(ar, .002+.33*rd*msize*vec3(1.05,.6,.6), d);
-            add(sdf, vec2(d, 2.+mod(pjf+1., 4.)), sdf);
+            add(sdf, vec2(d, 2.+mod(pjf+nBeats+1., 4.)), sdf);
         }
         else
         {
             d = length(ar)-1.3*(.002+.33*rd*msize);
-            add(sdf, vec2(d,2.+mod(pjf,4.)), sdf);
+            add(sdf, vec2(d,2.+mod(pjf+nBeats,4.)), sdf);
 //             d = length(ar.xy)-1.3*(.002+.33*rd*msize);
 //             zextrude(ar.z, d, .33*rd*msize*.5, d);
 //             add(sdf, vec2(d,2.+mod(pjf+1.+12.*rd,4.)), sdf);
@@ -350,8 +350,7 @@ void colorize_floor(in vec3 x, in vec3 n, inout vec3 col)
     d /= psize;
     d = abs(-d)-.01;
     rand(hpi,r);
-    col = mix(mix(2.6,2.,r)*c.xxx,1.7*c.xxx, sm(d));
-//     col = mix(col, vec3(1.00,0.29,0.24), .6*r);
+    col = mix(mix(.6,1.,r)*c.xxx,.7*c.xxx, sm(d));
 }
 
 void illuminate(in vec3 x, in vec3 n, in vec3 dir, in vec3 l, inout vec3 col, in vec2 s)

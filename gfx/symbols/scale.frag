@@ -25,6 +25,7 @@ void scale(in float iTime, out float s)
     {
         s = mod(iTime+.3- 35.8321 , 0.35715 )- 0.178575 ;
         s = smoothstep( -0.0297625 ,0.,s)*(1.-smoothstep(0., 0.0892875 ,s));
+        s *= (1.-smoothstep(92.9749, 94.9749, iTime));
     }
 }
 

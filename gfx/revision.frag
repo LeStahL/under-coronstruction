@@ -179,16 +179,15 @@ void main_scene(in vec3 x, out vec2 sdf)
     
     // Black inside
     d0 = d;
-    float ramp = 0.;// clamp(.05-.1*abs(x.x),-.05,.05);
-    zextrude(x.z, d, .13+ramp, d);
+    zextrude(x.z, d, .13*nBeats/26., d);
     add(sdf, vec2(d,1.), sdf);
     
     // Red outside
     rand(floor(2.*ssize*x.zx)+1337., dv.x);
     rand(floor(ssize*x.zx)+2337., dv.y);
     dv *= .05;
-    d = abs(d0)-.0029+.001*dv.x;
-    zextrude(x.z+-.05+2.*dv.y, d, .15+ramp, d);
+    d = abs(d0)-.0029-.003*iScale+.001*dv.x;
+    zextrude(x.z+-.05+2.*dv.y, d, .15*nBeats/26., d);
     add(sdf, vec2(d, 1.), sdf);
     sdf.x -= .001;
     
@@ -309,6 +308,9 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
     vec2 uv = (fragCoord-.5*iResolution.xy)/iResolution.y,
         s, ss,
         s0;
+        
+    scale(iTime+35.8321, iScale);
+    nbeats(iTime+35.8321, nBeats);
     
     vec3 col = c.yyy,
         o = c.yzx,

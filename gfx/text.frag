@@ -127,8 +127,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 //             
         float sc = smoothstep(8.,9.,iTime)*(1.-smoothstep(10., 11., iTime));
 //         
-        dstring(uv-vec2(-.55,.025), 9., .03, d);
-        dstring(uv-vec2(-.55,-.025), 2., .03, da);
+        dstring(uv-vec2(-.55,-.175), 9., .03, d);
+        dstring(uv-vec2(-.55,-.225), 2., .03, da);
         d = min(d, da);
         d = mix(1., d, sc);
         new.gba = mix(new.gba, c.yyy, sm(d-.11));

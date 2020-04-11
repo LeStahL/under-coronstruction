@@ -365,7 +365,7 @@ void illuminate(in vec3 x, in vec3 n, in vec3 dir, in vec3 l, inout vec3 col, in
     {
         col = vec3(0.93,0.29,0.20);
         col = .1*col
-            + mix(.5,1.,step(fract(iTime),.5))*col*dot(l, n)
+            + mix(.5,1.,mod(nBeats,2.))*col*dot(l, n)
             + 1.1*col*pow(abs(dot(reflect(l,n),dir)),2.);
     }
     else if(s.y == 2.) // Balls outside

@@ -324,16 +324,17 @@ void main_scene(in vec3 x, out vec2 sdf)
 //     vec2 y = mod(x.xy,dd)-.5*dd,
 //         a = x.xy-y/dd+.5;
     
-    if(a == c.yy && iTime < 2.) d5711(psize*y, d);
-    else if(a == c.yy && iTime < 2.) d5711(psize*y, d);
-    else if(a == c.yy && iTime < 3.) dmercury(psize*y, d);
-    else if(a == c.yy && iTime < 4.) dfarbrausch(psize*y, d);
-    else if(a == c.yy && iTime < 5.) ddeadline(psize*y, d);
-    else if(a == c.yy && iTime < 6.) dspacepigs(psize*y, d);
-    else if(a == c.yy && iTime < 7.) dhaujobb(psize*y, d);
-    else if(a == c.yy && iTime < 8.) dschnappsgirls(psize*y, d);
-    else if(a == c.yy && iTime < 9.) dkewlers(psize*y, d);
-    else if(a == c.yy && iTime < 10.) drevision(psize*y,1., d);
+    float nan = mod(.5*nBeats, 9.);
+    
+    if(a==c.yy && nan < 1.) d5711(psize*y, d);
+    else if(a==c.yy && nan < 2.) dmercury(psize*y, d);
+    else if(a==c.yy && nan < 3.) dfarbrausch(psize*y, d);
+    else if(a==c.yy && nan < 4.) ddeadline(psize*y, d);
+    else if(a==c.yy && nan < 5.) dspacepigs(psize*y, d);
+    else if(a==c.yy && nan < 6.) dhaujobb(psize*y, d);
+    else if(a==c.yy && nan < 7.) dschnappsgirls(psize*y, d);
+    else if(a==c.yy && nan < 8.) dkewlers(psize*y, d);
+    else if(a==c.yy && nan < 9.) drevision(psize*y,1., d);
     else d = 1.;
     d/=psize;
     zextrude(x.z, d, .05, d);
@@ -381,7 +382,7 @@ void illuminate(in vec3 x, in vec3 n, in vec3 dir, in vec3 l, inout vec3 col, in
     {
         col = vec3(0.93,0.29,0.20);
         col = .1*col
-            + mix(.5,1.,step(fract(iTime),.5))*col*dot(l, n)
+            + mix(.5,1.,mod(nBeats,2.))*col*dot(l, n)
             + 1.1*col*pow(abs(dot(reflect(l,n),dir)),2.);
     }
     else if(s.y == 2.) // Balls outside

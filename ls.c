@@ -16,12 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#define DEBUG // Shader debug i/o
-#define DEBUG_SHADER // Shader compile and link errors
-#define MIDI // APC40 mkII controls
+// #define DEBUG // Shader debug i/o
+// #define DEBUG_SHADER // Shader compile and link errors
+// #define MIDI // APC40 mkII controls
 #define RECORD // Compile in recording capabilities
 
 #define DEMO
+#define FUCKING_DEMO
 
 #ifdef MIDI
 #include "engine/midi.h"
